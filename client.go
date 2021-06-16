@@ -97,6 +97,25 @@ func (c *Client) SplitSentence(lang LangSpec, text ...string) (res *SplitSentenc
 	return
 }
 
+// TranslationOptions wraps additional options
+// for the translation endpoint.
+type TranslationOptions struct {
+	Formality        Formality `json:"formality"`
+	PreferedNumBeams int       `json:"prefered_num_beams"`
+}
+
+func defaultTranslationOptions(options []TranslationOptions) (opt TranslationOptions) {
+	if len(options) > 0 {
+		opt = options[0]
+	}
+
+	if opt.PreferedNumBeams < 1 {
+		opt.PreferedNumBeams = 4
+	}
+
+	return
+}
+
 // Translate performs a translation request of the passed text respecting the
 // passed sourceLang and targetLang.
 //
@@ -104,8 +123,13 @@ func (c *Client) SplitSentence(lang LangSpec, text ...string) (res *SplitSentenc
 // translated separately respecting the context of the sentences around.
 // The result will contain Translation object for each translated sentence
 // with their associated translation beams.
-func (c *Client) Translate(sourceLang, targetLang LangSpec, text string) (res *TranslationResult, err error) {
+//
+// You can also pass some options if you want to customize the formality or
+// the prefered number of beams, for example.
+func (c *Client) Translate(sourceLang, targetLang LangSpec, text string, options ...TranslationOptions) (res *TranslationResult, err error) {
 	res = &TranslationResult{}
+
+	opt := defaultTranslationOptions(options)
 
 	if sourceLang == "" {
 		sourceLang = LangAuto
@@ -138,6 +162,14 @@ func (c *Client) Translate(sourceLang, targetLang LangSpec, text string) (res *T
 			RawEnSentence:      s,
 			RawEnContextBefore: sentences[0:i],
 			RawEnContextAfter:  sentences[i+1:],
+			PreferredNumBeams:  opt.PreferedNumBeams,
+		}
+	}
+
+	var cjp *commonJobParams
+	if opt.Formality != "" {
+		cjp = &commonJobParams{
+			Formality: opt.Formality,
 		}
 	}
 
@@ -150,10 +182,8 @@ func (c *Client) Translate(sourceLang, targetLang LangSpec, text string) (res *T
 				TargetLang:         targetLang,
 				UserPreferredLangs: []LangSpec{},
 			},
-			Jobs: jobs,
-			CommonJobParams: &commonJobParams{
-				Formality: "formal",
-			},
+			Jobs:            jobs,
+			CommonJobParams: cjp,
 		}),
 		&jsonRpcResponse{Result: res})
 

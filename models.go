@@ -2,11 +2,11 @@ package godeepl
 
 import "sync/atomic"
 
+var rollingId int64
+
 // LangSpec is the specification for
 // a specific language selector.
 type LangSpec string
-
-var rollingId int64
 
 const (
 	LangAuto       LangSpec = "auto"
@@ -34,6 +34,13 @@ const (
 	LangSlovenian  LangSpec = "SL"
 	LangSwedish    LangSpec = "SV"
 	LangChinese    LangSpec = "ZH"
+)
+
+type Formality string
+
+const (
+	FormalityFormal   Formality = "formal"
+	FormalityInformal Formality = "informal"
 )
 
 // LoginResult wraps the response of the login endpoint.
@@ -123,7 +130,7 @@ type language struct {
 }
 
 type commonJobParams struct {
-	Formality string `json:"formality"`
+	Formality Formality `json:"formality"`
 }
 
 type jsonRpcResponse struct {
