@@ -42,14 +42,22 @@ type Client struct {
 }
 
 // New creates a new instance of Client with
-// the passed options.
-func New(options ClientOptions) *Client {
-	if options.Endpoint == "" {
-		options.Endpoint = EndpointPublic
+// the passed options, if passed.
+//
+// Defaultly, when no options are passed,
+// EndpointPublic is used as API endpoint.
+func New(options ...ClientOptions) *Client {
+	var opt ClientOptions
+	if len(options) > 0 {
+		opt = options[0]
+	}
+
+	if opt.Endpoint == "" {
+		opt.Endpoint = EndpointPublic
 	}
 
 	return &Client{
-		options: &options,
+		options: &opt,
 		client: &fasthttp.Client{
 			Name: "godeepl",
 		},
