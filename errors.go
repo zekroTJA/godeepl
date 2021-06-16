@@ -2,6 +2,8 @@ package godeepl
 
 import "fmt"
 
+// ResponseError is returned when a request returns an
+// erroneous response code.
 type ResponseError struct {
 	Code int
 }

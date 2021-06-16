@@ -19,5 +19,5 @@ func main() {
 	})
 
 	res, err := c.Translate(godeepl.LangGerman, godeepl.LangEnglish, "Jo, was geht ab du alter Sack! Dauert das noch lange?")
-	fmt.Println(res.Assemble(), err)
+	fmt.Println(res.Translation(0).Beam(0), err)
 }
