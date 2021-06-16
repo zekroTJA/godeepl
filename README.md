@@ -1,5 +1,7 @@
 # GoDeepl - A Deepl API wrapper
 
+[![](https://godoc.org/github.com/zekroTJA/timedmap?status.svg)](https://pkg.go.dev/github.com/zekrotja/godeepl)
+
 This is a Go wrapper around the *(mostly undocumented)* JSON RPC API of the online translation service [Deepl](https://www.deepl.com/translator).
 
 ## How to use it
